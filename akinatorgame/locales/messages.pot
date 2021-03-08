@@ -1,0 +1,75 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2021-03-08 18:02+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: redgettext 3.3\n"
+
+#: akinatorgame\akinatorcog.py:80
+msgid "Are you ready to answer Akinator's questions? (y/n)"
+msgstr ""
+
+#: akinatorgame\akinatorcog.py:93
+msgid ""
+"Do you wish to set a specific language? If so, please specify it now (Find "
+"all available language at "
+"<https://github.com/NinjaSnail1080/akinator.py#functions>) else just say "
+"'no'."
+msgstr ""
+
+#: akinatorgame\akinatorcog.py:104
+msgid "You didn't answered in time... 😔"
+msgstr ""
+
+#: akinatorgame\akinatorcog.py:119
+msgid "You're not running any game!"
+msgstr ""
+
+#: akinatorgame\akinatorcog.py:139
+msgid "Question"
+msgstr ""
+
+#: akinatorgame\akinatorcog.py:190
+msgid "Invalid language! Be sure it's written correctly."
+msgstr ""
+
+#: akinatorgame\akinatorcog.py:203
+msgid "This is the end of the game."
+msgstr ""
+
+#: akinatorgame\akinatorcog.py:226
+msgid "Cannot go back any further! You will have to answer my question."
+msgstr ""
+
+#: akinatorgame\akinatorcog.py:238
+msgid "I hope I won then, at least. 😩"
+msgstr ""
+
+#: akinatorgame\akinatorcog.py:241
+msgid "I won! I'm so glad I guessed your mind!"
+msgstr ""
+
+#: akinatorgame\akinatorcog.py:244
+msgid ""
+"Awh, that's bad... But feel free to ask me for another person, I don't mind "
+"you."
+msgstr ""
+
+#: akinatorgame\akinatorcog.py:250
+msgid "Hmm... I think I've guessed..."
+msgstr ""
+
+#: akinatorgame\akinatorcog.py:251
+msgid "Is it {name}? The description is {desc}."
+msgstr ""
+
+#: akinatorgame\akinatorcog.py:261
+msgid ""
+"Game running for {name}. I asked over {num} questions! (Cog version {ver})"
+msgstr ""

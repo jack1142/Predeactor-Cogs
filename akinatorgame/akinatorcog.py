@@ -1,17 +1,19 @@
 import asyncio
 from json import JSONDecodeError
+from contextlib import suppress
 
 import discord
 from akinator import AkiNoQuestions, CantGoBackAnyFurther, InvalidLanguageError
 from akinator.async_aki import Akinator
 from redbot.core import commands
+from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import humanize_list
 from redbot.core.utils.embed import randomize_colour
 from redbot.core.utils.predicates import MessagePredicate
 
 __author__ = ["Predeactor"]
-__version__ = "Beta v0.6.4"
+__version__ = "Beta v0.7"
 
 
 def testing_check():
@@ -26,6 +28,10 @@ def testing_check():
     return commands.check(predicate)
 
 
+_ = Translator("AkinatorCog", __file__)
+
+
+@cog_i18n(_)
 class AkinatorCog(commands.Cog, name="Akinator"):
     """
     The genius, Akinator, will guess your mind and find who you are thinking of, go challenge him!
@@ -71,43 +77,45 @@ class AkinatorCog(commands.Cog, name="Akinator"):
         """
 
         await ctx.send_help()
-        await ctx.send("Are you ready to answer Akinator's questions? (y/n)")
+        await ctx.send(_("Are you ready to answer Akinator's questions? (y/n)"))
         check = MessagePredicate.yes_or_no(ctx=ctx)
         try:
             await self.bot.wait_for("message", timeout=60, check=check)
         except TimeoutError:
             check.result = False
         if not check.result:
-            await ctx.send("See you later then! \N{WAVING HAND SIGN}")
+            await ctx.send(_("See you later then! \N{WAVING HAND SIGN}"))
             return
-        await ctx.send("Let's go!")
         game_class = UserGame(ctx.author, ctx.channel, self.bot)
         self.ongoing_games[ctx.author.id] = game_class
         await ctx.send(
-            "Do you wish to set a specific language? If so, please specify it now (Find all "
-            "available language at <https://github.com/NinjaSnail1080/akinator.py#functions>) else "
-            "just say 'no'."
+            _(
+                "Do you wish to set a specific language? If so, please specify it now (Find all "
+                "available language at "
+                "<https://github.com/NinjaSnail1080/akinator.py#functions>) else just say 'no'."
+            )
         )
         try:
             res = await self.bot.wait_for(
                 "message", timeout=60, check=MessagePredicate.same_context(ctx=ctx)
             )
         except asyncio.TimeoutError:
-            await ctx.send("You didn't answered in time... \N{PENSIVE FACE}")
+            await ctx.send(_("You didn't answered in time... \N{PENSIVE FACE}"))
             return
         res = res.content.lower()
         lang = res if res not in ("no", "n") else "en"
-        await game_class.start_akinator_game(language=lang)
+
         try:
-            del self.ongoing_games[ctx.author.id]
-        except KeyError:
-            pass
+            await game_class.start_akinator_game(language=lang)
+        finally:
+            with suppress(KeyError):
+                del self.ongoing_games[ctx.author.id]
 
     @akinator.command()
     async def cancel(self, ctx: commands.Context):
         """Cancel your game with Akinator."""
         if ctx.author.id not in self.ongoing_games:
-            await ctx.send("You're not running any game!")
+            await ctx.send(_("You're not running any game!"))
             return
         game_class: UserGame = self.ongoing_games[ctx.author.id]
         game_class.task.cancel()
@@ -127,7 +135,7 @@ class UserGame:
         self.count = 1
 
     async def ask_question(self):
-        await self.channel.send("Question #{num}: ".format(num=self.count) + str(self.question))
+        await self.channel.send(_("Question") + " #{num}: ".format(num=self.count) + str(self.question))
         received = await self.wait_for_input()
         return received
 
@@ -169,7 +177,7 @@ class UserGame:
             except (asyncio.TimeoutError, asyncio.CancelledError):
                 return None
             valid_answer = True
-        return done.content
+        return done.content.lower()
 
     async def start_akinator_game(self, language: str):
         if not self.question:
@@ -178,7 +186,7 @@ class UserGame:
                     language=language, child_mode=True if self.channel.nsfw else False
                 )
             except InvalidLanguageError:
-                await self.channel.send("Invalid language! Be sure it's written correctly.")
+                await self.channel.send(_("Invalid language! Be sure it's written correctly."))
                 return None
 
         answer = await self.answer_questions()
@@ -191,7 +199,7 @@ class UserGame:
         while self.akinator.progression <= self.prog:
             user_prompt = await self.ask_question()
             if not user_prompt:
-                await self.channel.send("This is the end of the game.")
+                await self.channel.send(_("This is the end of the game."))
                 return False
 
             if user_prompt in ("b", "back"):
@@ -202,7 +210,7 @@ class UserGame:
                 self.question = await self.akinator.answer(user_prompt)
                 self.count += 1
             except JSONDecodeError:
-                await self.channel.send("An unexpected error happened.")
+                await self.channel.send(_("An unexpected error happened."))
             except AkiNoQuestions:
                 return True
         return True
@@ -214,7 +222,7 @@ class UserGame:
             self.count -= 1
         except CantGoBackAnyFurther:
             await self.channel.send(
-                "Cannot go back any further! You will have to answer my question."
+                _("Cannot go back any further! You will have to answer my question.")
             )
         return self.question
 
@@ -226,20 +234,20 @@ class UserGame:
         try:
             await self.task
         except (asyncio.TimeoutError, asyncio.CancelledError):
-            await self.channel.send("I hope I won then, at least. \N{WEARY FACE}")
+            await self.channel.send(_("I hope I won then, at least. \N{WEARY FACE}"))
             return
         if check.result:
-            await self.channel.send("I won! I'm so glad I guessed your mind!")
+            await self.channel.send(_("I won! I'm so glad I guessed your mind!"))
             return True
         await self.channel.send(
-            "Awh, that's bad... But feel free to ask me for another person, I " "don't mind you."
+            _("Awh, that's bad... But feel free to ask me for another person, I " "don't mind you.")
         )
         return False
 
     async def make_guess_embed(self):
         embed = discord.Embed(
-            title="Hmm... I think I've guessed...",
-            description="Is it {name}? The description is {desc}.".format(
+            title=_("Hmm... I think I've guessed..."),
+            description=_("Is it {name}? The description is {desc}.").format(
                 name=self.akinator.first_guess["name"],
                 desc=self.akinator.first_guess["description"],
             ),
@@ -249,7 +257,7 @@ class UserGame:
         embed.set_footer(
             icon_url=self.user.avatar_url,
             text=(
-                "Game running for {name}. I asked over {num} questions! (Cog version {ver})"
+                _("Game running for {name}. I asked over {num} questions! (Cog version {ver})")
             ).format(name=self.user.name, num=self.count, ver=__version__),
         )
         return embed
