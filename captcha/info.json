@@ -12,6 +12,6 @@
         "defender"
     ],
     "requirements": [
-        "discapty"
+        "discapty==0.4"
     ]
 }
