@@ -264,7 +264,7 @@ class Captcha(
                 for role in await self.data.guild(challenge.guild).autoroles()
             ]
             try:
-                await self.congratulation(challenge, *roles)
+                await self.congratulation(challenge, roles)
                 await self.remove_temprole(challenge)
                 await self.send_or_update_log_message(
                     challenge.guild,
@@ -325,7 +325,7 @@ class Captcha(
         if not channel.permissions_for(self.bot.get_guild(challenge.guild.id).me).manage_roles:
             raise PermissionError('Bot miss the "manage_roles" permission.')
 
-        await challenge.member.add_roles(roles, reason="Passed Captcha successfully.")
+        await challenge.member.add_roles(*roles, reason="Passed Captcha successfully.")
 
     async def nicely_kick_user_from_challenge(self, challenge: Challenge, reason: str):
         # We're gonna check our permission first, to avoid DMing the user for nothing.
