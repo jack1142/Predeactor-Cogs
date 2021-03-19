@@ -8,9 +8,6 @@
   </a>
   <img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Code style: black">
   <br>
-  <a href="https://discord.gg/zg6ydua">
-    <img src="https://discord.com/api/guilds/731147725902708827/widget.png" alt="Support Server">
-  </a>
 </p>
 
 This is a repo made for [Red](https://github.com/Cog-Creators/Red-DiscordBot).
