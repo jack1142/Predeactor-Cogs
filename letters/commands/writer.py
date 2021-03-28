@@ -1,5 +1,6 @@
 from asyncio import TimeoutError as AsyncTimeoutError
 from asyncio import sleep
+from typing import Optional
 
 from discord.ext.commands.errors import ArgumentParsingError, UserNotFound
 from redbot.core import commands
@@ -72,7 +73,7 @@ class Writer(MixinMeta):
             await msg.delete()
         return pred.result
 
-    async def ask_for_receivers(self, ctx: commands.Context) -> dict:
+    async def ask_for_receivers(self, ctx: commands.Context) -> Optional[dict]:
         # ask if know to who to send to
         result = await self.confirm(
             ctx, "Do you know the IDs/names of the persons I must contact?"
@@ -182,6 +183,7 @@ class Writer(MixinMeta):
                 )
             )
             return
+        # noinspection PyTypeChecker
         template = await TemplateMenu(TemplatePage(TEMPLATES)).prompt(ctx)
         if not template:
             await ctx.send("Let's write another letter another time.")

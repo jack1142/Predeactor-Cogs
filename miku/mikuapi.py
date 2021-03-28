@@ -16,7 +16,8 @@ class Miku(commands.Cog):
     __author__ = ["Predeactor"]
     __version__ = "v1.0.1"
 
-    def __init__(self, bot):
+    def __init__(self, bot, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.bot = bot
 
     def format_help_for_context(self, ctx: commands.Context) -> str:

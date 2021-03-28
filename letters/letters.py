@@ -21,7 +21,8 @@ class Letters(Writer, LetterSet, LetterBox, commands.Cog, metaclass=CompositeMet
     Send a letter to someone.
     """
 
-    def __init__(self, bot):
+    def __init__(self, bot, *_args):
+        super().__init__(*_args)
         self.bot = bot
         self.config = Config.get_conf(self, identifier=27032020, force_registration=True)
         self.config.register_user(**DEFAULT_USER)
@@ -98,7 +99,6 @@ class Letters(Writer, LetterSet, LetterBox, commands.Cog, metaclass=CompositeMet
             return True
         except discord.HTTPException:
             return False
-        return False
 
     async def add_new_letter_in_letterbox(self, receiver_id: int, letter: Letter) -> int:
         """
@@ -116,24 +116,24 @@ class Letters(Writer, LetterSet, LetterBox, commands.Cog, metaclass=CompositeMet
         await self.config.custom("LetterBox", user.id).next_id.set(letter_id + 1)
         return letter_id
 
-    async def get_letter_in_letterbox(self, user_id: int, id: int) -> Letter:
-        letterbox = await self.config.user_from_id(user_id).letterbox()
+    async def get_letter_in_letterbox(self, user_id: int, letter_id: int) -> Letter:
+        user_letterbox = await self.config.user_from_id(user_id).letterbox()
         try:
-            letter = letterbox[str(id)]
+            letter = user_letterbox[str(letter_id)]
         except KeyError:
             raise LetterNotExist("Cannot find the letter ID.")
         return Letter.from_json(letter)
 
-    async def delete_letter_in_letterbox(self, receiver_id: int, id: int):
+    async def delete_letter_in_letterbox(self, receiver_id: int, letter_id: int):
         """
         Remove a new letter to a letterbox.
         """
         user = await self.bot.get_or_fetch_user(receiver_id)
         if user is None:  # User not found
             raise discord.NotFound("User cannot be found.")
-        async with self.config.user(user).letterbox() as letterbox:
+        async with self.config.user(user).letterbox() as user_letterbox:
             try:
-                del letterbox[str(id)]
+                del user_letterbox[str(letter_id)]
             except KeyError:
                 raise LetterNotExist("Cannot find the letter ID.")
 

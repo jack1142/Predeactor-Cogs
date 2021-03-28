@@ -28,11 +28,11 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    async def get_letter_in_letterbox(self, user_id: int, id: int) -> Letter:
+    async def get_letter_in_letterbox(self, user_id: int, letter_id: int) -> Letter:
         raise NotImplementedError()
 
     @abstractmethod
-    async def delete_letter_in_letterbox(self, receiver_id: int, id: int):
+    async def delete_letter_in_letterbox(self, receiver_id: int, letter_id: int):
         raise NotImplementedError()
 
     @abstractmethod

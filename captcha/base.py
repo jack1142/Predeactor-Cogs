@@ -193,7 +193,7 @@ class Captcha(
             except discord.Forbidden:
                 raise PermissionError('Bot miss the "manage_roles" permission.')
 
-    async def realize_challenge(self, challenge: Challenge) -> None:
+    async def realize_challenge(self, challenge: Challenge) -> bool:
         # Seems to be the last goddamn function I'll be writing...
         limit = await self.data.guild(challenge.member.guild).retry()
         is_ok = None
