@@ -8,11 +8,11 @@ async def check_permissions_in_channel(permissions: List[str], channel: discord.
     """Function to checks if the permissions are available in a guild.
     This will return a list of the missing permissions.
     """
-    missing_perm = []
-    for permission in permissions:
-        if not getattr(channel.permissions_for(channel.guild.me), permission):
-            missing_perm.append(permission)
-    return missing_perm
+    return [
+        permission
+        for permission in permissions
+        if not getattr(channel.permissions_for(channel.guild.me), permission)
+    ]
 
 
 def build_kick_embed(guild: discord.Guild, reason: str):

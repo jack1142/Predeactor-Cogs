@@ -1,4 +1,5 @@
 {
+    "$schema": "https://raw.githubusercontent.com/Cog-Creators/Red-DiscordBot/V3/develop/schema/red_cog.schema.json",
     "author": ["Predeactor"],
     "description": "Send your image and shorten your URL with your own subdomain.",
     "short": "Shorten your link and send your image through a link.",

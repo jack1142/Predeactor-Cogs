@@ -108,13 +108,11 @@ class Captcha(
                     allowed_mentions=discord.AllowedMentions(users=False),
                 )
             except discord.HTTPException:
-                if message_to_update.embeds:
-                    if (
-                        message_to_update.embeds[0].title
-                        == "Message reached his maximum capacity!"
-                    ):
-                        # To avoid edit spam or something... smh
-                        return message_to_update
+                if message_to_update.embeds and (
+                    message_to_update.embeds[0].title == "Message reached his maximum capacity!"
+                ):
+                    # To avoid edit spam or something... smh
+                    return message_to_update
                 await message_to_update.edit(
                     content=message_to_update.content,
                     file=file,
@@ -138,10 +136,12 @@ class Captcha(
             )
         raise DeletedValueError("Logging channel may have been deleted.")
 
-    async def basic_check(self, member: discord.Member):
+    async def basic_check(self, member: discord.Member) -> bool:
         """
         Check the basis from a member; used when a member join the server.
         """
+        if member.bot:
+            return False
         return await self.data.guild(member.guild).enabled()
 
     async def create_challenge_for(self, member: discord.Member) -> Challenge:
@@ -173,7 +173,7 @@ class Captcha(
             raise KeyError("User is not challenging any Captcha.")
         return self.running[member_or_id]
 
-    async def give_temprole(self, challenge: Challenge):
+    async def give_temprole(self, challenge: Challenge) -> None:
         temprole = challenge.config["temprole"]
         if temprole:
             try:
@@ -183,7 +183,7 @@ class Captcha(
             except discord.Forbidden:
                 raise PermissionError('Bot miss the "manage_roles" permission.')
 
-    async def remove_temprole(self, challenge: Challenge):
+    async def remove_temprole(self, challenge: Challenge) -> None:
         temprole = challenge.config["temprole"]
         if temprole:
             try:
@@ -193,7 +193,7 @@ class Captcha(
             except discord.Forbidden:
                 raise PermissionError('Bot miss the "manage_roles" permission.')
 
-    async def realize_challenge(self, challenge: Challenge):
+    async def realize_challenge(self, challenge: Challenge) -> None:
         # Seems to be the last goddamn function I'll be writing...
         limit = await self.data.guild(challenge.member.guild).retry()
         is_ok = None
@@ -310,7 +310,7 @@ class Captcha(
                 )
         return True
 
-    async def congratulation(self, challenge: Challenge, roles: list):
+    async def congratulation(self, challenge: Challenge, roles: list) -> None:
         """
         Congrats to a member! He finished the captcha!
         """
@@ -327,7 +327,7 @@ class Captcha(
 
         await challenge.member.add_roles(*roles, reason="Passed Captcha successfully.")
 
-    async def nicely_kick_user_from_challenge(self, challenge: Challenge, reason: str):
+    async def nicely_kick_user_from_challenge(self, challenge: Challenge, reason: str) -> bool:
         # We're gonna check our permission first, to avoid DMing the user for nothing.
 
         # Admin may have set channel to be DM, checking for kick_members is useless since

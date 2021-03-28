@@ -146,10 +146,12 @@ class Core(commands.Cog):
             bool or str: If all permissions are given to bot, it will return
              True, else it return a text which include missing permissions.
         """
-        missing_perm = []
-        for permission in permissions:
-            if not getattr(channel.permissions_for(channel.guild.me), permission):
-                missing_perm.append(permission.replace("_", " ").title())
+        missing_perm = [
+            permission.replace("_", " ").title()
+            for permission in permissions
+            if not getattr(channel.permissions_for(channel.guild.me), permission)
+        ]
+
         if missing_perm:
             return (
                 "I am missing the following permission{plural} in {channel} "
@@ -225,7 +227,7 @@ class Core(commands.Cog):
             )
         except asyncio.TimeoutError:
             return False, None  # Maybe use None too? Anyway, custom errors so F
-        return True if user_message.content == str(code) else False, user_message
+        return user_message.content == str(code), user_message
 
     async def _give_role(self, member: discord.Member):
         """Function to give and/or remove role from member.
@@ -306,9 +308,8 @@ class Core(commands.Cog):
               discord.Channel: The log channel, or None if not set/cannot be
                found.
         """
-        if member.id in self.in_challenge:
-            if "logschannel" in self.in_challenge[member.id].keys():
-                return self.in_challenge[member.id]["logschannel"]
+        if member.id in self.in_challenge and "logschannel" in self.in_challenge[member.id].keys():
+            return self.in_challenge[member.id]["logschannel"]
         channel_id = await self.data.guild(member.guild).logschannel()
         if not channel_id:
             return None
@@ -485,9 +486,11 @@ class Core(commands.Cog):
         mods: list, admins: list, me: discord.Member, default: discord.Role
     ):
         """Obtain a list of permissions for staff."""
-        data = {}
-        for admin in admins:
-            data[admin] = discord.PermissionOverwrite(read_messages=True, send_messages=False)
+        data = {
+            admin: discord.PermissionOverwrite(read_messages=True, send_messages=False)
+            for admin in admins
+        }
+
         for mod in mods:
             data[mod] = discord.PermissionOverwrite(read_messages=True, send_messages=False)
         data[default] = discord.PermissionOverwrite(read_messages=False)
@@ -639,7 +642,7 @@ class Core(commands.Cog):
         if member.id not in self.in_challenge:
             return
         left_guild = self.in_challenge[member.id]["bot_message"].guild
-        if not left_guild == member.guild:  # Not same guild
+        if left_guild != member.guild:  # Not same guild
             return
         bot_message = self.in_challenge[member.id]["bot_message"]
         await bot_message.delete()

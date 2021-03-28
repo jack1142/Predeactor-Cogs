@@ -38,13 +38,12 @@ class CodeSource(commands.Cog):
         except OSError:
             await ctx.send("The command wasn't found, is it an InstantCmd command?")
             return
-        temp_pages = []
-        pages = []
-        for page in pagify(source_code, escape_mass_mentions=True, page_length=1980):
-            temp_pages.append("```py\n" + str(page).replace("```", "`\u17b5``") + "```")
+        temp_pages = [
+            "```py\n" + str(page).replace("```", "`\u17b5``") + "```"
+            for page in pagify(source_code, escape_mass_mentions=True, page_length=1980)
+        ]
+
         max_i = len(temp_pages)
-        i = 1
-        for page in temp_pages:
-            pages.append(f"Page {i}/{max_i}\n" + page)
-            i += 1
+        pages = [f"Page {i}/{max_i}\n" + page for i, page in enumerate(temp_pages, start=1)]
+
         await menu(ctx, pages, controls=DEFAULT_CONTROLS)

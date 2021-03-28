@@ -1,4 +1,5 @@
 {
+    "$schema": "https://raw.githubusercontent.com/Cog-Creators/Red-DiscordBot/V3/develop/schema/red_cog.schema.json",
     "author": ["Predeactor"],
     "description": "Obtain one of the most beautiful image representing Hatsune Miku!",
     "short": "Obtain a random image of Miku.",

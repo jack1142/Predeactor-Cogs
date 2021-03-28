@@ -1,7 +1,7 @@
 class Lessons:
     @staticmethod
     def pintro():
-        intro = [
+        return [
             "Welcome to an unnoficial guide of *How to use Python3*, in Discord!\n\nThis guide is maintained by "
             "`Predeactor#0495`, any useful report can be reported to me, there's also the [repository of this Cog]("
             "https://github.com/Predeactor/Predeactor-Cogs) if you want to help me in writing this little guide *if* "
@@ -15,11 +15,10 @@ class Lessons:
             ", you must start your command with ` and you can now start learning!.\n\nEverything is setup, enjoy me "
             "lessons!\n- *Made by Predeactor.* "
         ]
-        return intro
 
     @staticmethod
     def pref():
-        ref = [
+        return [
             "Those links are from the Red - Discord Bot server, thank to them for those sweet links!",
             3,
             "```New to programming:```\n[CodeCademy](https://codecademy.com/) (Free interactive courses for "
@@ -36,11 +35,10 @@ class Lessons:
             "Tutorials - Working with Classes, by Corey Schafer]("
             "https://www.youtube.com/playlist?list=PL-osiE80TeTsqhIuOqKhwlXsIBIdSeYtc)",
         ]
-        return ref
 
     @staticmethod
     def plvl1():
-        lvl1_list = [
+        return [
             "Hello there, and let me say, WELCOME, welcome to your first lesson of *How to use Python3*, wonderful! "
             "You're learning right in Discord, isn't it awesome?\n\nI'm Predeactor, I'll be your teacher for now\n\nSo "
             "let's start with installing Python.\nYou are running this command from Red, an open source Discord Bot "
@@ -63,11 +61,10 @@ class Lessons:
             "command, in the next lesson, we will talk about variable, those magic things!\n\n*Nb: To close your Python"
             " interpreter, just close the window or type `exit()` ;)*",
         ]
-        return lvl1_list
 
     @staticmethod
     def plvl2():
-        lvl2_list = [
+        return [
             "```My First Variable```\nWelcome to your next lesson, let's discover together what a variable is\n\nA "
             "variable is an attibution of a data. Let me explain you with an example:\n\t- When you're playing "
             "Minecraft "
@@ -95,12 +92,11 @@ class Lessons:
             "now: "
             "we will see the different type of data in the next lesson.",
         ]
-        return lvl2_list
 
     @staticmethod
     def plvl3():
         ignored_double_quote = '\\"'
-        lvl3_list = [
+        return [
             f"```The different Type of Data```\nToday, we're gonna see some theory, yes, don't expect any code today!\n"
             f"There's different types of data in Python, AND NOT only in Python, that would be a mess without that.",
             7,
@@ -123,4 +119,3 @@ class Lessons:
             30,
             "Time for congratulation ! Now you know what is what in Python! Next time, we will talk about comparators.",
         ]
-        return lvl3_list

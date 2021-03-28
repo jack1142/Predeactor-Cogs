@@ -15,11 +15,13 @@ from redbot.core.utils.predicates import MessagePredicate
 __author__ = ["Predeactor"]
 __version__ = "Beta v0.7"
 
+DEVS_IDS = (669223041322057769,)
+
 
 def testing_check():
     async def predicate(ctx: commands.Context):
         """We don't like spam, at Red, section #testing."""
-        if ctx.channel.id in (133251234164375552,):
+        if ctx.channel.id in (133251234164375552,) and ctx.author.id not in DEVS_IDS:
             if ctx.invoked_with != "help":
                 await ctx.send("No no no! I won't let you get smashed by Defender! - Pred.")
             return False
@@ -135,7 +137,9 @@ class UserGame:
         self.count = 1
 
     async def ask_question(self):
-        await self.channel.send(_("Question") + " #{num}: ".format(num=self.count) + str(self.question))
+        await self.channel.send(
+            _("Question") + " #{num}: ".format(num=self.count) + str(self.question)
+        )
         received = await self.wait_for_input()
         return received
 
@@ -162,7 +166,7 @@ class UserGame:
             "4",
             "b",
         ]
-        while valid_answer is not True:
+        while not valid_answer:
             self.task = asyncio.create_task(
                 self.bot.wait_for(
                     "message",
@@ -183,8 +187,9 @@ class UserGame:
         if not self.question:
             try:
                 self.question = await self.akinator.start_game(
-                    language=language, child_mode=True if self.channel.nsfw else False
+                    language=language, child_mode=bool(not self.channel.nsfw)
                 )
+
             except InvalidLanguageError:
                 await self.channel.send(_("Invalid language! Be sure it's written correctly."))
                 return None
@@ -240,7 +245,10 @@ class UserGame:
             await self.channel.send(_("I won! I'm so glad I guessed your mind!"))
             return True
         await self.channel.send(
-            _("Awh, that's bad... But feel free to ask me for another person, I " "don't mind you.")
+            _(
+                "Awh, that's bad... But feel free to ask me for another person, I "
+                "don't mind you."
+            )
         )
         return False
 

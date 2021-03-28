@@ -75,22 +75,18 @@ class CommandsCounter(commands.Cog):
 
     @commands.Cog.listener()
     async def on_command(self, ctx: commands.Context):
-        command = str(ctx.command)
         if ctx.message.author.bot is False:
+            command = str(ctx.command)
             if command not in self.commands:
-                self.commands[command] = {}
-                self.commands[command]["count"] = 1
-                self.commands[command]["error"] = 0
+                self.commands[command] = {"count": 1, "error": 0}
                 return
             self.commands[command]["count"] += 1
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx: commands.Context, error):
-        command = str(ctx.command)
         if ctx.message.author.bot is False:
+            command = str(ctx.command)
             if command not in self.commands:
-                self.commands[command] = {}
-                self.commands[command]["count"] = 1
-                self.commands[command]["error"] = 1
+                self.commands[command] = {"count": 1, "error": 1}
                 return
             self.commands[command]["error"] += 1

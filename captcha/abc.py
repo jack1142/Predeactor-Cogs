@@ -34,7 +34,7 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    async def create_challenge_for(self, member: discord.Member):
+    async def create_challenge_for(self, member: discord.Member) -> Challenge:
         raise NotImplementedError()
 
     @abstractmethod
@@ -42,7 +42,7 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def is_running_challenge(self, member_or_id: Union[discord.Member, int]):
+    def is_running_challenge(self, member_or_id: Union[discord.Member, int]) -> bool:
         raise NotImplementedError()
 
     @abstractmethod
@@ -50,11 +50,11 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    async def give_temprole(self, member: discord.Member):
+    async def give_temprole(self, member: discord.Member) -> None:
         raise NotImplementedError()
 
     @abstractmethod
-    async def remove_temprole(self, member: discord.Member):
+    async def remove_temprole(self, member: discord.Member) -> None:
         raise NotImplementedError()
 
     @abstractmethod
@@ -62,19 +62,19 @@ class MixinMeta(ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    async def basic_check(self, member: discord.Member):
+    async def basic_check(self, member: discord.Member) -> bool:
         raise NotImplementedError()
 
     @abstractmethod
-    async def congratulation(self, challenge: Challenge, roles: list):
+    async def congratulation(self, challenge: Challenge, roles: list) -> None:
         raise NotImplementedError()
 
     @abstractmethod
-    async def nicely_kick_user_from_challenge(self, challenge: Challenge, reason: str):
+    async def nicely_kick_user_from_challenge(self, challenge: Challenge, reason: str) -> bool:
         raise NotImplementedError()
 
     @abstractmethod
-    def _initialize(self, send_patchnote: bool = True):
+    def _initialize(self, send_patchnote: bool) -> None:
         raise NotImplementedError()
 
     @abstractmethod

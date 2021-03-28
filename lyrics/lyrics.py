@@ -1,12 +1,13 @@
 import re
 from asyncio import create_task
 from asyncio.exceptions import TimeoutError as Te
-from typing import Literal
+from typing import Literal, Optional
 
 import discord
 
 # noinspection PyUnresolvedReferences
 import ksoftapi
+import lavalink
 from redbot.core import commands
 from redbot.core.utils.chat_formatting import (
     bold,
@@ -31,7 +32,7 @@ BOT_SONG_RE = re.compile(
 class Lyrics(commands.Cog):
 
     __author__ = ["Predeactor"]
-    __version__ = "v1.0.7"
+    __version__ = "v2"
 
     def __init__(self, bot, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -61,19 +62,23 @@ class Lyrics(commands.Cog):
     @commands.command(alias=["lyric"])
     @commands.bot_has_permissions(embed_links=True)
     @commands.max_concurrency(1, commands.BucketType.user, wait=False)
-    async def lyrics(self, ctx: commands.Context, *, song_name: str):
-        """Return the lyrics of a given music/song name.
+    async def lyrics(self, ctx: commands.Context, *, song_name: Optional[str]):
+        """Return the lyrics of a given music/song name or running music.
 
+        This command can also find out the music you're actually listening to.
         Powered by KSoft.Si.
         """
-        song_name = BOT_SONG_RE.sub("", song_name)
+        music = await self.determine_music_source(ctx, song_name)
+        if not music and not song_name:
+            await ctx.send_help()
+            return
         try:
             client = await self.obtain_client()
         except AttributeError:
             await ctx.send("Not key for KSoft.Si has been set, ask owner to add a key.")
             return
         try:
-            music_lyrics = await client.music.lyrics(song_name)
+            music_lyrics = await client.music.lyrics(music)
         except ksoftapi.NoResults:
             await ctx.send("No lyrics were found for your music.")
             return
@@ -88,28 +93,65 @@ class Lyrics(commands.Cog):
         except KeyError:
             await ctx.send("The set API key seem to be wrong. Please contact the bot owner.")
             return
+        music = await self.get_song(ctx, music_lyrics, bool(song_name))
+        if music is None:
+            return
+        embeds = await self.make_embed(music, ctx)
+        if len(embeds) > 1:
+            create_task(
+                menu(ctx, embeds, DEFAULT_CONTROLS, timeout=600)
+            )  # No await since max_concurrency is there
+        else:
+            await ctx.send(embed=embeds[0])
+
+    async def get_song(self, ctx: commands.Context, music_lyrics, send_question: bool):
         message, available_musics = await self._title_choose(music_lyrics)
+        if not send_question:
+            return available_musics["0"]
+
         bot_message = await ctx.maybe_send_embed(message)
         predicator = MessagePredicate.less(10, ctx)
         try:
             user_message = await self.bot.wait_for("message", check=predicator, timeout=60)
-            await bot_message.delete()
         except Te:
             await ctx.send("Rude.")
-            await bot_message.delete()
             return
+        finally:
+            await bot_message.delete()
 
         chosen_music = user_message.content
         if chosen_music not in available_musics:
-            await ctx.send(
-                "I was unable to find the corresponding music in the available music list."
-            )
+            if chosen_music != "-1":
+                await ctx.send(
+                    "I was unable to find the corresponding music in the available music list."
+                )
             return
-        music = available_musics[chosen_music]
+        return available_musics[chosen_music]
+
+    async def determine_music_source(self, ctx: commands.Context, song_str: Optional[str]):
+        try:
+            player = lavalink.get_player(ctx.guild.id)
+        except (KeyError, IndexError):
+            player = None
+        if not player and song_str:
+            return BOT_SONG_RE.sub("", song_str)
+        if not (player or song_str):
+            return None
+        if player and song_str:
+            return BOT_SONG_RE.sub("", song_str)
+
+        possible_music = player.current
+        if not possible_music:
+            return None
+        return BOT_SONG_RE.sub("", possible_music.title)
+
+    @staticmethod
+    async def make_embed(music: ksoftapi.models.LyricResult, ctx: commands.Context):
         embeds = []
-        color = await ctx.embed_color()
         for text in pagify(music.lyrics):
-            embed = discord.Embed(color=color, title=music.name, description=None)
+            embed = discord.Embed(
+                color=await ctx.embed_color(), title=music.name, description=None
+            )
             embed.set_thumbnail(
                 url=music.album_art
                 if str(music.album_art) != "https://cdn.ksoft.si/images/Logo1024%20-%20W.png"
@@ -118,12 +160,7 @@ class Lyrics(commands.Cog):
             embed.set_footer(text="Powered by KSoft.Si.", icon_url=ctx.author.avatar_url)
             embed.description = text
             embeds.append(embed)
-        if len(embeds) > 1:
-            create_task(
-                menu(ctx, embeds, DEFAULT_CONTROLS, timeout=600)
-            )  # No await since max_concurrency is here
-        else:
-            await ctx.send(embed=embeds[0])
+        return embeds
 
     @staticmethod
     async def _title_choose(list_of_music: list):

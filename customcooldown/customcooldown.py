@@ -98,7 +98,6 @@ class CustomCooldown(commands.Cog):
                     deleted = True
                 except (discord.NotFound, discord.Forbidden):
                     deleted = False
-                    pass
                 if send_dm and not user.bot:
                     with suppressor(Exception):
                         remaining_time = humanize_timedelta(
@@ -507,11 +506,9 @@ class CustomCooldown(commands.Cog):
             if user.bot:
                 is_bot.append(user.name)
                 continue
-            if user.id not in all_members or (
-                user.id in all_members and not all_members[user.id]["ignored"]
-            ):
+            if user.id not in all_members or not all_members[user.id]["ignored"]:
                 must_be_added.append(user)
-            elif user.id in all_members and all_members[user.id]["ignored"]:
+            else:
                 already_added.append(str(user))
 
         for user in must_be_added:
@@ -547,10 +544,11 @@ class CustomCooldown(commands.Cog):
         all_members = await self.config.all_members(ctx.guild)
 
         for user in users:
-            if user.id in all_members and all_members[user.id]["ignored"]:
-                must_remove.append(user)
-            elif user.id in all_members and not all_members[user.id]["ignored"]:
-                already_removed.append(user.name)
+            if user.id in all_members:
+                if all_members[user.id]["ignored"]:
+                    must_remove.append(user)
+                else:
+                    already_removed.append(user.name)
 
         for user in must_remove:
             await self.config.member(user).clear()

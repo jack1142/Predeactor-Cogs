@@ -84,7 +84,7 @@ class SXCU(commands.Cog):
         raw_message, maybe_embed = await self._make_embed_and_raw_message(
             ctx, url, deletion_url if not user_dmed else None, thumbnail
         )
-        await ctx.send(raw_message, embed=maybe_embed if maybe_embed else None)
+        await ctx.send(raw_message, embed=maybe_embed or None)
 
     async def _shorten_command_logic(self, ctx: commands.Context, link: str):
         # Looking if the given URL is correct
@@ -111,7 +111,7 @@ class SXCU(commands.Cog):
         raw_message, maybe_embed = await self._make_embed_and_raw_message(
             ctx, url, deletion_url if not user_dmed else None
         )
-        await ctx.send(raw_message, embed=maybe_embed if maybe_embed else None)
+        await ctx.send(raw_message, embed=maybe_embed or None)
 
     @staticmethod
     async def _try_send_private_message_deletion(

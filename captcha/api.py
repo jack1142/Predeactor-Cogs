@@ -89,7 +89,7 @@ class Challenge:
                     error_message += form.error(form.bold("Code invalid. Do not copy and paste."))
                     state = False
                 else:
-                    if state is False:
+                    if not state:
                         error_message += form.warning("Code invalid.")
                 if error_message:
                     await self.channel.send(error_message, delete_after=3)
@@ -239,8 +239,6 @@ class Challenge:
         """
         errored = False
         for message in self.messages.items():
-            message[0]: str
-            message[1]: discord.Message
             if message[0] == "bot_challenge":
                 self.cancel_tasks()
             if message[0] == "logs":
@@ -255,7 +253,7 @@ class Challenge:
                     raise PermissionError("Cannot delete message.")
             except discord.HTTPException:
                 errored = True
-        return True if not errored else False
+        return not errored  # Return if deleted, contrary of erroring, big brain
 
     def _give_me_tasks(self) -> list:
         def leave_check(u):

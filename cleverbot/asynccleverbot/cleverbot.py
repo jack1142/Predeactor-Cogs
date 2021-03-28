@@ -54,15 +54,14 @@ class DictContext:
     """Context for API requests."""
 
     def __init__(self):
-        self._storage = dict()
+        self._storage = {}
 
     def update_context(self, id_, query):
         """Pushes data to the Context."""
         try:
             ctx = self._storage[id_]
         except KeyError:
-            li_temp = list()
-            li_temp.append(query)
+            li_temp = [query]
             self._storage[id_] = li_temp
             return dict(text=query)
         else:
@@ -114,8 +113,7 @@ class Cleverbot:
         """Sets the Cleverbot's context to an instance of DictContext."""
         if not isinstance(context, DictContext):
             raise TypeError("Context passed was not an instance of DictContext.")
-        else:
-            self.context = context
+        self.context = context
 
     async def ask(self, query: str, id_=None, *, emotion: Emotion = Emotion.neutral):
         """Queries the Cleverbot API."""

@@ -126,9 +126,10 @@ class LeaderBoard(commands.Cog):
                 receiver=await self._user_mention(user),
                 author=ctx.author,
                 reps=user_points + 1,
-                plural="s" if (user_points + 1) > 1 else "",
+                plural="s" if user_points > 0 else "",
             )
         )
+
         await self.data.user(ctx.author).next_reputation.set(current_time_as_seconds)
 
     async def _user_mention(self, user):
