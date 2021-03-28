@@ -28,7 +28,7 @@ class Writer(MixinMeta):
         starting = bold("\N{HOURGLASS}\N{VARIATION SELECTOR-16} Starting sending process...")
         msg = await ctx.send(starting)
         for user_info in letter.receivers.items():
-            sleep(7.5)
+            await sleep(7.5)
             sending = "\n" + bold(
                 "{emoji} Sending letter to {user}...".format(
                     emoji="\N{HOURGLASS}\N{VARIATION SELECTOR-16}", user=user_info[1]
