@@ -1,6 +1,6 @@
 {
     "$schema": "https://raw.githubusercontent.com/Cog-Creators/Red-DiscordBot/V3/develop/schema/red_cog.schema.json",
-    "authors": [
+    "author": [
         "Predeactor"
     ],
     "end_user_data_statement": "This cog store data about users persistently for saving datas. Red may store your discord ID with your data you set and receive.",
