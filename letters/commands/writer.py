@@ -127,9 +127,7 @@ class Writer(MixinMeta):
         async for guild in AsyncIter(self.bot.guilds, steps=100):
             for user in found:
                 if user in guild.members:
-                    can_be_contacted.append(
-                        user
-                    )
+                    can_be_contacted.append(user)
         return {
             "users": {user.id: user.name for user in can_be_contacted},
             "missing_contactable": [user for user in found if user not in can_be_contacted],
