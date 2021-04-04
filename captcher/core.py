@@ -560,6 +560,9 @@ class Core(commands.Cog):
         if member.bot:
             return  # We ignore bots
 
+        if await self.bot.cog_disabled_in_guild(self, member.guild):
+            return
+
         data = await self.data.guild(member.guild).all()
         active = data["active"]
         guild_channel_id = data["verifchannel"]
