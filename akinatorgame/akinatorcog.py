@@ -13,7 +13,7 @@ from redbot.core.utils.embed import randomize_colour
 from redbot.core.utils.predicates import MessagePredicate
 
 __author__ = ["Predeactor"]
-__version__ = "Beta v0.7"
+__version__ = "Beta v0.7.1"
 
 DEVS_IDS = (669223041322057769,)
 
@@ -22,9 +22,9 @@ def testing_check():
     async def predicate(ctx: commands.Context):
         """We don't like spam, at Red, section #testing."""
         if ctx.channel.id in (133251234164375552,) and ctx.author.id not in DEVS_IDS:
-            if ctx.invoked_with != "help":
-                await ctx.send("No no no! I won't let you get smashed by Defender! - Pred.")
-            return False
+            raise commands.UserFeedbackCheckFailure(
+                "No no no! I won't let you get smashed by Defender! - Pred."
+            )
         return True
 
     return commands.check(predicate)

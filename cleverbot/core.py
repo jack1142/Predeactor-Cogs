@@ -12,7 +12,7 @@ seems_ok = None
 class Core(commands.Cog):
 
     __author__ = ["Predeactor"]
-    __version__ = "v1.0.6"
+    __version__ = "v1.0.7"
 
     async def red_delete_data_for_user(
         self,
@@ -110,9 +110,10 @@ def apicheck():
             seems_ok = False
             return seems_ok
         if not_key:
-            await ctx.send("The API key is not registered, the command is unavailable.")
             seems_ok = False
-            return seems_ok
+            raise commands.UserFeedbackCheckFailure(
+                "The API key is not registered, the command is unavailable."
+            )
         seems_ok = True
         return seems_ok
 
